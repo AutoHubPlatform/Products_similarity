@@ -1,0 +1,44 @@
+services:
+  db:
+    image: ankane/pgvector
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: fruits
+    ports:
+      - "5433:5432"
+    volumes:
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d fruits || exit 1"]
+      start_period: 10s
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    networks:
+      - app-net
+
+  app:
+    build: ./app
+    volumes:
+      - ./app:/app                  # Only mount your app folder to /app in container
+      - ./app/fruit_images:/app/fruit_images  # Keep this if you want persistent images
+      - ./app/uploads:/app/uploads     # <-- persist uploaded images here
+    ports:
+      - "8501:8501"
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_HOST: db
+      DB_PORT: "5432"
+      DB_NAME: fruits
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      PYTHONUNBUFFERED: "1"
+    working_dir: /app
+    networks:
+      - app-net
+
+networks:
+  app-net:

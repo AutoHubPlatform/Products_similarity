@@ -1,0 +1,6 @@
+streamlit
+psycopg2-binary
+torch --index-url https://download.pytorch.org/whl/cpu
+torchvision
+Pillow
+open_clip_torch
