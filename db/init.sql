@@ -11,5 +11,16 @@ CREATE TABLE IF NOT EXISTS products (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- Add barcode column if it does not exist
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_name='products' AND column_name='barcode'
+    ) THEN
+        ALTER TABLE products ADD COLUMN barcode VARCHAR(64);
+    END IF;
+END$$;
+
 CREATE INDEX IF NOT EXISTS idx_article_number ON products USING HASH (article_number);
 CREATE INDEX IF NOT EXISTS idx_product_name_trgm ON products USING GIN (product_name gin_trgm_ops);
