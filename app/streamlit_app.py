@@ -7,6 +7,7 @@ import open_clip
 import os
 import uuid
 import re
+import shutil  # Add this import for file and folder removal
 
 # Database configuration
 DB_CONFIG = {
@@ -20,6 +21,7 @@ DB_CONFIG = {
 # Load CLIP model with caching
 @st.cache_resource
 def load_model():
+    # Revert to the old model configuration
     model, _, preprocess = open_clip.create_model_and_transforms('ViT-B-32', pretrained='openai')
     return model, preprocess
 
@@ -67,6 +69,7 @@ st.title("🍓 Fruit Similarity Search")
 
 uploaded_file = st.file_uploader("Upload a fruit image", type=["jpg", "jpeg", "png"])
 if uploaded_file:
+    st.write("File uploaded successfully!")  # Debug message
     image = Image.open(uploaded_file).convert("RGB")
     st.image(image, caption="Uploaded Image", use_container_width=True)
 
@@ -78,7 +81,7 @@ if uploaded_file:
 
     # Save uploaded image locally
     upload_folder = "uploads"
-    os.makedirs(upload_folder, exist_ok=True)
+    os.makedirs(upload_folder, exist_ok=True)  # Create the folder if it doesn't exist
     image_filename = f"{uuid.uuid4().hex}.png"
     image_path = os.path.join(upload_folder, image_filename)
     image.save(image_path)
@@ -97,9 +100,32 @@ if uploaded_file:
             insert_product(article_number, product_name.strip(), image_path, embedding)
             st.success(f"Saved {product_name} (Article: {article_number}) to database!")
 
-    # Show top 3 similar products
-    results = find_similar(embedding)
-    st.subheader("Top 3 Similar Products:")
-    for art_num, prod_name, img_path, dist in results:
-        st.markdown(f"**{prod_name}** (Article: {art_num}) — Similarity: `{1 - dist:.3f}`")
-        st.image(img_path, width=100)
+    # Add a button to check similarity
+    if st.button("Check Similarity"):
+        results = find_similar(embedding)
+        st.subheader("Top 3 Similar Products:")
+        for art_num, prod_name, img_path, dist in results:
+            # Check if the image file exists before displaying it
+            if os.path.exists(img_path):
+                st.markdown(f"**{prod_name}** (Article: {art_num}) — Similarity: `{1 - dist:.3f}`")
+                st.image(img_path, width=100)
+            else:
+                st.markdown(f"**{prod_name}** (Article: {art_num}) — Similarity: `{1 - dist:.3f}`")
+                st.warning(f"Image for article {art_num} is no longer available.")
+
+    # Add a button to remove uploaded images
+    if st.button("Remove Uploaded Images"):
+        try:
+            # Iterate through all files in the uploads folder and delete them
+            for root, dirs, files in os.walk(upload_folder):
+                for file in files:
+                    file_path = os.path.join(root, file)
+                    try:
+                        os.remove(file_path)  # Remove individual files
+                        st.info(f"Removed file: {file_path}")
+                    except Exception as e:
+                        st.warning(f"Could not remove file {file_path}: {e}")
+            st.success("All uploaded images have been removed successfully.")
+        except Exception as e:
+            st.error(f"Error while removing uploaded images: {e}")
+
