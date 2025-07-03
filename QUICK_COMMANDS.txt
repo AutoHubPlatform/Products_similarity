@@ -1,0 +1,42 @@
+# Quick Commands for Client Demo
+
+## Application URL
+http://46.232.249.36:8501
+
+## Essential Commands
+
+### FROM LOCAL MACHINE (using SSH config):
+```bash
+# Check if app is running:
+ssh automationhub-server 'cd /home/hazem/maxQ.hyperautomation/backend/services/image-matcher && docker-compose ps'
+
+# Restart application (if needed):
+ssh automationhub-server 'cd /home/hazem/maxQ.hyperautomation/backend/services/image-matcher && docker-compose up -d'
+
+# View application logs (troubleshooting):
+ssh automationhub-server 'cd /home/hazem/maxQ.hyperautomation/backend/services/image-matcher && docker-compose logs -f app'
+
+# Stop application (after demo):
+ssh automationhub-server 'cd /home/hazem/maxQ.hyperautomation/backend/services/image-matcher && docker-compose down'
+```
+
+### FROM REMOTE SERVER (when already logged in):
+```bash
+# First, navigate to the project directory:
+cd /home/hazem/maxQ.hyperautomation/backend/services/image-matcher
+
+# Check if app is running:
+docker-compose ps
+
+# Restart application (if needed):
+docker-compose up -d
+
+# View application logs (troubleshooting):
+docker-compose logs -f app
+
+# Stop application (after demo):
+docker-compose down
+```
+
+## Quick Status Check
+The containers should show "Up" status for both app and db services.
