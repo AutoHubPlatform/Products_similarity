@@ -135,3 +135,39 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+# Backup files and temporary versions
+backups/
+*.backup
+*_backup_*
+*_old.*
+*_new.*
+*_fixed.*
+*_modified.*
+
+# Python specific
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+venv/
+env/
+ENV/
+
+# Environment files
+.env
+.env.local
+
+# Docker volumes
+postgres_data/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
