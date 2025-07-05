@@ -10,6 +10,10 @@ import re
 import shutil  # Add this import for file and folder removal
 from gpt_utils import generate_product_info
 
+# Initialize session state for tracking uploads
+if 'session_uploads' not in st.session_state:
+    st.session_state.session_uploads = 0
+
 # Database configuration
 DB_CONFIG = {
     "host": os.environ.get("DB_HOST", "localhost"),
@@ -501,6 +505,7 @@ if uploaded_file:
                 else:
                     try:
                         insert_product(article_number, product_name.strip(), image_path, embedding, barcode)
+                        st.session_state.session_uploads += 1  # Increment session counter
                         st.success(f"✅ Saved {product_name} (Article: {article_number}) to database!")
                     except Exception as e:
                         st.error(f"❌ Error saving to database: {e}")
@@ -601,7 +606,63 @@ upload_folder = "uploads"
 uploaded_files_list = get_uploaded_files(upload_folder)
 
 if uploaded_files_list:
-    st.write(f"📁 **Total uploaded images:** {len(uploaded_files_list)}")
+    # Create two columns for displaying metrics
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.metric(
+            label="📁 Total Uploaded Images", 
+            value=len(uploaded_files_list),
+            help="Total number of images stored in the uploads folder"
+        )
+    
+    with col2:
+        st.metric(
+            label="🆕 Session Uploads", 
+            value=st.session_state.session_uploads,
+            help="Number of products uploaded during this session"
+        )
+    
+    # Session controls and reset options
+    st.markdown("#### 🔧 Counter Controls")
+    col1_btn, col2_btn = st.columns(2)
+    
+    with col1_btn:
+        if len(uploaded_files_list) > 0:
+            with st.expander("🗑️ Reset Total Images Counter"):
+                st.warning("⚠️ This will delete ALL uploaded images from the uploads folder!")
+                confirm_reset = st.checkbox("✅ I confirm to delete all uploaded images", key="confirm_reset_all")
+                
+                if confirm_reset and st.button("🗑️ Clear All Images & Reset Counter", 
+                                               type="secondary", 
+                                               help="Remove all images to reset the total counter"):
+                    try:
+                        removed_count = 0
+                        for filename in uploaded_files_list:
+                            file_path = os.path.join(upload_folder, filename)
+                            if os.path.exists(file_path):
+                                try:
+                                    os.remove(file_path)
+                                    removed_count += 1
+                                except Exception as e:
+                                    st.error(f"❌ Could not remove {filename}: {e}")
+                        
+                        if removed_count > 0:
+                            st.success(f"✅ Successfully removed {removed_count} images. Total counter reset to 0!")
+                            st.rerun()
+                        else:
+                            st.warning("⚠️ No files were removed.")
+                    except Exception as e:
+                        st.error(f"❌ Error while removing images: {e}")
+    
+    with col2_btn:
+        if st.session_state.session_uploads > 0:
+            if st.button("🔄 Reset Session Counter", 
+                        help="Reset only the session upload counter to 0",
+                        type="primary"):
+                st.session_state.session_uploads = 0
+                st.success("✅ Session counter reset to 0!")
+                st.rerun()
     
     # Selective removal
     with st.expander("🗑️ Remove Selected Images"):

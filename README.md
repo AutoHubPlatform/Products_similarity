@@ -107,8 +107,7 @@ docker-compose logs -f app
 3. Click "🔄 Process Image"
 4. System automatically checks for similar existing products
 5. If duplicates found, decide whether to proceed
-6. Enter barcode and product name
-7. Save to database
+6. Enter barcode and product name=
 
 ### 📊 **Database Analytics**
 - View real-time statistics
