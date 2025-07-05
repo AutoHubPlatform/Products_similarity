@@ -6,7 +6,7 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: fruits
     ports:
-      - "5433:5432"
+      - "5434:5432"
     volumes:
       - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
     healthcheck:
@@ -37,6 +37,18 @@ services:
       DB_PASSWORD: postgres
       PYTHONUNBUFFERED: "1"
     working_dir: /app
+    networks:
+      - app-net
+
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80"
+    depends_on:
+      - db
     networks:
       - app-net
 
