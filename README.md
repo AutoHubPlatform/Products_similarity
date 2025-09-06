@@ -264,14 +264,17 @@ ports:
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+**View the full license here:** [MIT LICENSE](LICENSE)
 
 ## 📞 Support
+
 
 For issues and questions:
 - Check the troubleshooting section
 - Review container logs: `docker-compose logs`
 - Create an issue in the repository
+- Phone: +20 1096401022
+- Email: zoma0097@gmail.com
 
 ---
 
