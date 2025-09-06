@@ -2,7 +2,19 @@
 
 An advanced AI-powered product recognition and similarity search system using OpenAI CLIP embeddings and PostgreSQL with pgvector for efficient vector similarity search.
 
-## 🚀 Features
+## � Screenshots
+
+<p align="center">
+  <img src="Screenshots/Products_Recogition.jpeg" alt="Product Recognition UI" width="600"/>
+</p>
+<p align="center"><b>Figure 1:</b> Streamlit web interface for product recognition and similarity search.</p>
+
+<p align="center">
+  <img src="Screenshots/Termianl_Product_Recoginition.jpeg" alt="Terminal Product Recognition" width="600"/>
+</p>
+<p align="center"><b>Figure 2:</b> Terminal output showing product recognition process.</p>
+
+## �🚀 Features
 
 ### ✨ **Core Functionality**
 - **🔍 Advanced Similarity Search**: Find similar products from your database using configurable parameters
@@ -87,7 +99,7 @@ docker-compose logs -f app
 ```
 
 ### 4. Access the Application
-- **Streamlit App**: http://46.232.249.36:8501/
+- **Streamlit App**: http://127.0.0.1:8501/
 - **PgAdmin4**: http://localhost:5050 (if configured)
 
 ## 🎯 How to Use
